@@ -32,8 +32,3 @@ rules:
   trailing-spaces: enable
   truthy:
     level: warning
-
-rules:
-  indentation:
-    ignore: |
-     **/templates/*.yaml
