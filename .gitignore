@@ -1,0 +1,29 @@
+# Ignore everything
+*
+
+# But not these files...
+
+# backend
+!*.yaml
+
+# frontend
+!favicon.ico
+
+# infra
+!Dockerfile
+!charts/**/.helmignore
+!charts/**/*.yaml
+
+#integrity
+!/.gitignore
+!Makefile
+!/make/*.mk
+!.yamllint
+!.kube-linter.yaml
+
+# project
+!*.md
+!CODEOWNERS
+
+# ...even if they are in subdirectories
+!*/
