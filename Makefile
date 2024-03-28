@@ -14,17 +14,13 @@ CYAN=\033[1;36m
 NC=\033[0m
 endif
 
-# kubectl port-forward deploy/podinfo-primary 8080:9898
-# kubectl port-forward deploy/podinfo 8081:9898
-# http://app.example.com:8080/  http://app.example.com:8081/
-# for i in {1..100}; do curl http://localhost:8080/status/500; sleep 1; done
-# kubectl get canaries --watch
+# kubectl -n ingress-nginx port-forward svc/ingress-nginx-controller 8081:80
+# http://test.cloud.example.com:8081/
+# for i in {1..100}; do curl http://test.cloud.example.com:8081/status/500; sleep 1; done
+# kubectl -n test get canaries --watch
 promote:
 	@echo -e " $(YELLOW)Bump podinfo from v6.0.0 to v6.0.2$(NC) "
 	kubectl -n test set image deployment/podinfo podinfod=ghcr.io/stefanprodan/podinfo:6.0.1
-
-rollback:
-
 
 application:
 	kubectl delete namespace test --ignore-not-found=true
