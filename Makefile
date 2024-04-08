@@ -29,17 +29,15 @@ promote2:
 application:
 	@echo -e "$(DOG)  $(YELLOW)Installing application$(NC) "
 	kubectl delete namespace test --ignore-not-found=true
-	kubectl delete namespace flagger --ignore-not-found=true
 	kubectl create ns test
 	kubectl apply -k https://github.com/fluxcd/flagger//kustomize/podinfo?ref=main
-	kubetl applhy -f ./svc.yaml
-	helm upgrade -i flagger-loadtester flagger/loadtester --namespace=flagger --create-namespace
+	kubectl apply -f ./svc.yaml
 	kubectl apply -f ./podinfo-ingress.yaml
+	helm upgrade -i flagger-loadtester flagger/loadtester --namespace=flagger --create-namespace
 
 install:
 	@echo -e "$(DOG)  $(YELLOW)Installing prerequisities $(PAW_PRINTS)$(NC) "
 	@echo -e "  $(CYAN)ingress-nginx$(NC) "
-	kubectl delete namespace ingress-nginx --ignore-not-found=true
 	helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 	helm upgrade -i ingress-nginx ingress-nginx/ingress-nginx \
 		--namespace ingress-nginx \
@@ -51,9 +49,11 @@ install:
 	@echo -e "  $(CYAN)Flagger$(NC) "
 	helm repo add flagger https://flagger.app
 	helm upgrade -i flagger flagger/flagger \
-		--namespace ingress-nginx \
+		--namespace flagger \
 		--set prometheus.install=true \
-		--set meshProvider=nginx
+		--set meshProvider=nginx \
+		--create-namespace
+
 
 bg:
 	kubectl apply -f ./podinfo-bluegreen.yaml

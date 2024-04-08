@@ -63,6 +63,13 @@ spec:
         metadata:
           type: bash
           cmd: "curl http://podinfo.test.svc:80/ | jq type 1>/dev/null"
+#      - name: panic-test
+#        type: pre-rollout
+#        url: http://flagger-loadtester.flagger/
+#        timeout: 15s
+#        metadata:
+#          type: bash
+#          cmd: "curl http://podinfo.test.svc:80/panic"
       - name: load-test
         url: http://flagger-loadtester.flagger/
         timeout: 5s
