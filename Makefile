@@ -1,7 +1,7 @@
 # https://docs.flagger.app/tutorials/nginx-progressive-delivery
 # https://docs.flagger.app/install/flagger-install-on-kubernetes#install-flagger-with-helm
 # https://artifacthub.io/packages/helm/flagger/flagger
-
+# https://artifacthub.io/packages/helm/flagger/loadtester
 
 
 SHELL := bash
@@ -19,18 +19,21 @@ endif
 # for i in {1..100}; do curl http://test.cloud.example.com:8081/status/200; sleep 10; done
 # kubectl -n test get canaries --watch
 promote:
-	@echo -e " $(YELLOW)Bump podinfo from v6.0.0 to v6.0.1$(NC) "
+	@echo -e " $(YELLOW)Bump to v6.0.1$(NC) "
 	kubectl -n test set image deployment/podinfo podinfod=ghcr.io/stefanprodan/podinfo:6.0.1
 
 promote2:
-	@echo -e " $(YELLOW)Bump podinfo from v6.0.0 to v6.6.1$(NC) "
+	@echo -e " $(YELLOW)Bump podinfo to v6.6.1$(NC) "
 	kubectl -n test set image deployment/podinfo podinfod=ghcr.io/stefanprodan/podinfo:6.6.1
 
 application:
+	@echo -e "$(DOG)  $(YELLOW)Installing application$(NC) "
 	kubectl delete namespace test --ignore-not-found=true
+	kubectl delete namespace flagger --ignore-not-found=true
 	kubectl create ns test
 	kubectl apply -k https://github.com/fluxcd/flagger//kustomize/podinfo?ref=main
-	helm upgrade -i flagger-loadtester flagger/loadtester --namespace=test
+	kubetl applhy -f ./svc.yaml
+	helm upgrade -i flagger-loadtester flagger/loadtester --namespace=flagger --create-namespace
 	kubectl apply -f ./podinfo-ingress.yaml
 
 install:

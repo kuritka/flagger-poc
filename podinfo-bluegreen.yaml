@@ -55,16 +55,16 @@ spec:
 #          max: 500
 #        interval: 30s
     # acceptance/load testing hooks
-#    webhooks:
-#      - name: smoke-test
-#        type: pre-rollout
-#        url: http://flagger-loadtester.test/
-#        timeout: 15s
-#        metadata:
-#          type: bash
-#          cmd: "curl http://podinfo.test.svc:80/ | jq type 1>/dev/null"
-#      - name: load-test
-#        url: http://flagger-loadtester.test/
-#        timeout: 5s
-#        metadata:
-#          cmd: "hey -z 1m -q 10 -c 2 http://podinfo.test.svc:80/"
+    webhooks:
+      - name: smoke-test
+        type: pre-rollout
+        url: http://flagger-loadtester.flagger/
+        timeout: 15s
+        metadata:
+          type: bash
+          cmd: "curl http://podinfo.test.svc:80/ | jq type 1>/dev/null"
+      - name: load-test
+        url: http://flagger-loadtester.flagger/
+        timeout: 5s
+        metadata:
+          cmd: "hey -z 1m -q 10 -c 2 http://podinfo.test.svc:80/"
