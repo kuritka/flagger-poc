@@ -16,18 +16,21 @@ endif
 
 # kubectl -n ingress-nginx port-forward svc/ingress-nginx-controller 8081:80
 # http://test.cloud.example.com:8081/
-# for i in {1..100}; do curl http://test.cloud.example.com:8081/status/500; sleep 1; done
+# for i in {1..100}; do curl http://test.cloud.example.com:8081/status/200; sleep 10; done
 # kubectl -n test get canaries --watch
 promote:
-	@echo -e " $(YELLOW)Bump podinfo from v6.0.0 to v6.0.2$(NC) "
+	@echo -e " $(YELLOW)Bump podinfo from v6.0.0 to v6.0.1$(NC) "
 	kubectl -n test set image deployment/podinfo podinfod=ghcr.io/stefanprodan/podinfo:6.0.1
+
+promote2:
+	@echo -e " $(YELLOW)Bump podinfo from v6.0.0 to v6.6.1$(NC) "
+	kubectl -n test set image deployment/podinfo podinfod=ghcr.io/stefanprodan/podinfo:6.6.1
 
 application:
 	kubectl delete namespace test --ignore-not-found=true
 	kubectl create ns test
 	kubectl apply -k https://github.com/fluxcd/flagger//kustomize/podinfo?ref=main
 	helm upgrade -i flagger-loadtester flagger/loadtester --namespace=test
-	kubectl apply -f ./podinfo-canary.yaml
 	kubectl apply -f ./podinfo-ingress.yaml
 
 install:
@@ -49,6 +52,10 @@ install:
 		--set prometheus.install=true \
 		--set meshProvider=nginx
 
+bg:
+	kubectl apply -f ./podinfo-bluegreen.yaml
+
+
 uninstall:
 	helm delete flagger
 
@@ -57,5 +64,8 @@ lint-init:
 
 lint:
 	yamllint . -c .yamllint
+
+
+reset: with-colima install-local-platform install application
 
 include ./.platform/colima.mk
